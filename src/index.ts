@@ -1,7 +1,9 @@
+import { LOG_COLORS } from './constants/constants';
 import { httpServer } from './http_server/index';
+import { coloredLog } from './utils/coloredLog';
 
-const HTTP_PORT = 8181;
+const HTTP_PORT = process.env.HTTP_PORT || 8181;
 
-console.log(`Start static http server on the ${HTTP_PORT} port!`);
+coloredLog(`Start static http server on the ${HTTP_PORT} port!`, LOG_COLORS.fMagenta);
 
 httpServer.listen(HTTP_PORT);
