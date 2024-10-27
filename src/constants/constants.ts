@@ -10,6 +10,10 @@ export enum HttpStatusCodes {
   SERVICE_UNAVAILABLE = 503,
 }
 
+export const DEFAULT_HTTP_PORT = 8181;
+
+export const DEFAULT_WS_PORT = 3000;
+
 export const enum LOG_COLORS {
   reset = '\x1b[0m',
   fRed = '\x1b[31m',
@@ -19,4 +23,19 @@ export const enum LOG_COLORS {
   fMagenta = '\x1b[35m',
   bgGreen = '\x1b[42m',
   bgBlue = '\x1b[44m',
+}
+
+export enum MESSAGE_TYPE {
+  REGISTRATION = 'reg',
+  UPDATE_ROOM = 'update_room',
+  CREATE_GAME = 'create_game',
+  TURN = 'turn',
+  START_GAME = 'start_game',
+  ATTACK = 'attack',
+  FINISH = 'finish',
+  UPDATE_WINNERS = 'update_winners',
+  ADD_SHIPS = 'add_ships',
+  CREATE_ROOM = 'create_room',
+  ADD_USER_TO_ROOM = 'add_user_to_room',
+  RANDOM_ATTACK = 'randomAttack',
 }

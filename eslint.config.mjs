@@ -4,6 +4,7 @@ import typescriptPlugin from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
 import prettierPlugin from 'eslint-plugin-prettier';
 import importPlugin from 'eslint-plugin-import';
+import globals from 'globals';
 
 export default [
   {
@@ -18,6 +19,7 @@ export default [
       },
       globals: {
         console: 'readonly',
+        ...globals.node,
       },
     },
     plugins: {
@@ -29,6 +31,7 @@ export default [
       ...js.configs.recommended.rules,
       ...prettier.rules,
       'prettier/prettier': 'error',
+      'comma-dangle': ['error', 'always-multiline'],
       'no-console': 'off',
       'import/prefer-default-export': 'off',
       'no-restricted-imports': 'off',
