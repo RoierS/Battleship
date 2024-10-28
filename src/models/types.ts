@@ -41,3 +41,44 @@ export interface CustomWebSocket extends WebSocket {
   playerName: string;
   playerIndex: number;
 }
+
+export interface IShip {
+  position: {
+    x: number;
+    y: number;
+  };
+  direction: boolean;
+  length: number;
+  type: 'small' | 'medium' | 'large' | 'huge';
+}
+
+export interface IAddShipsData {
+  gameId: number;
+  ships: IShip[];
+  indexPlayer: number;
+}
+
+export interface IGame {
+  idGame: number;
+  players: IRoomPlayer[];
+  ships: PlayerShips[];
+  currentTurn?: number;
+}
+
+export type ShipType = 'small' | 'medium' | 'large' | 'huge';
+
+export interface Position {
+  x: number;
+  y: number;
+}
+
+export interface Ship {
+  position: Position;
+  direction: boolean;
+  length: number;
+  type: ShipType;
+}
+export interface PlayerShips {
+  indexPlayer: number;
+  ships: Ship[];
+}

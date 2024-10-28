@@ -7,6 +7,7 @@ import { coloredLog } from '../utils/coloredLog';
 import { LOG_COLORS, MESSAGE_TYPE } from '../constants/constants';
 import { players } from '../models/players';
 import { createWSResponse } from '../utils/createWSResponse';
+import { games } from '../models/games';
 
 export const updateRooms = (wss: WebSocketServer) => {
   const availableRooms = rooms
@@ -49,7 +50,7 @@ export const handleCreateRoom = (ws: CustomWebSocket) => {
 
       coloredLog(`🛖 New Room created! 🎉`, LOG_COLORS.fGreen);
     } else {
-      coloredLog(`🛖 This Player ${player.name} already have a room!`, LOG_COLORS.fYellow);
+      coloredLog(`🛖 This Player ${player.name} already has a room!`, LOG_COLORS.fYellow);
     }
   }
 };
@@ -58,14 +59,22 @@ const createGameInRoom = (room: IRoom, wss: WebSocketServer) => {
   const { roomId, roomUsers } = room;
   const idGame = roomId;
 
-  roomUsers.forEach((user) => {
+  const newGame = {
+    idGame,
+    players: roomUsers.map((user) => ({ name: user.name, index: user.index })),
+    ships: [],
+  };
+
+  games.push(newGame);
+
+  roomUsers.forEach(({ index }) => {
     const response = createWSResponse(MESSAGE_TYPE.CREATE_GAME, {
       idGame,
-      idPlayer: user.index,
+      idPlayer: index,
     });
 
     const client = Array.from(wss.clients).find(
-      (clientWS) => (clientWS as CustomWebSocket).playerIndex === user.index
+      (clientWS) => (clientWS as CustomWebSocket).playerIndex === index
     );
 
     if (client && client.readyState === WebSocket.OPEN) {
@@ -74,11 +83,12 @@ const createGameInRoom = (room: IRoom, wss: WebSocketServer) => {
   });
 
   coloredLog(
-    `🎮 Game started in room #${idGame} between ${roomUsers.map((u) => `'${u.name}'`).join(' and ')}`,
+    `🎮 Game started in room #${roomId} between ${roomUsers.map((u) => `'${u.name}'`).join(' and ')}`,
     LOG_COLORS.fGreen
   );
 
   const roomIndex = rooms.findIndex((r) => r.roomId === roomId);
+
   if (roomIndex !== -1) {
     rooms.splice(roomIndex, 1);
   }

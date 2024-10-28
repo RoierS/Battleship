@@ -2,8 +2,15 @@ import { WebSocketServer } from 'ws';
 import { coloredLog } from '../utils/coloredLog';
 import { LOG_COLORS } from '../constants/constants';
 import { handlePlayerRegistration } from '../controllers/playerController';
-import type { PlayerRegData, GameRequest, IAddUserToRoom, CustomWebSocket } from '../models/types';
+import type {
+  PlayerRegData,
+  GameRequest,
+  IAddUserToRoom,
+  CustomWebSocket,
+  IAddShipsData,
+} from '../models/types';
 import { handleAddUserToRoom, handleCreateRoom, updateRooms } from '../controllers/roomController';
+import { handleAddShips } from '../controllers/addShipsController';
 
 export const startWSServer = (WS_PORT: number) => {
   const wss = new WebSocketServer({ port: WS_PORT });
@@ -16,7 +23,6 @@ export const startWSServer = (WS_PORT: number) => {
       try {
         const parsedMessage: GameRequest = JSON.parse(msg);
         console.log(`📩 Received command - '${parsedMessage.type}': ${msg}`);
-
         const { type, data } = parsedMessage;
 
         switch (type) {
@@ -37,6 +43,12 @@ export const startWSServer = (WS_PORT: number) => {
             const { indexRoom }: IAddUserToRoom = JSON.parse(data);
             handleAddUserToRoom(ws, indexRoom, wss);
             updateRooms(wss);
+            break;
+          }
+
+          case 'add_ships': {
+            const { gameId, ships, indexPlayer }: IAddShipsData = JSON.parse(data);
+            handleAddShips({ gameId, ships, indexPlayer, wss });
             break;
           }
 
