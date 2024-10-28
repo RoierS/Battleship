@@ -5,6 +5,7 @@
 ## Installation
 1. Clone/download repo
 2. `npm install`
+3. You should rename `.env.example` to `.env` before running the project
 
 ## Usage
 **Development**
