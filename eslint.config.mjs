@@ -31,7 +31,7 @@ export default [
       ...js.configs.recommended.rules,
       ...prettier.rules,
       'prettier/prettier': 'error',
-      'comma-dangle': ['error', 'always-multiline'],
+      'comma-dangle': ['error', 'only-multiline'],
       'no-console': 'off',
       'import/prefer-default-export': 'off',
       'no-restricted-imports': 'off',

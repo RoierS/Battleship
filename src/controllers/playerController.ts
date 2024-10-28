@@ -1,52 +1,54 @@
-import type WebSocket from 'ws';
-import type { IPlayer, PlayerRegData } from '../models/types';
+import type { CustomWebSocket, IPlayer, PlayerRegData } from '../models/types';
 import { players } from '../models/players';
 import { createRegistrationResponse } from '../utils/createRegistrationResponse';
 import { coloredLog } from '../utils/coloredLog';
 import { LOG_COLORS } from '../constants/constants';
 
-export const handlePlayerRegistration = (data: PlayerRegData, ws: WebSocket) => {
+export const handlePlayerRegistration = (data: PlayerRegData, ws: CustomWebSocket) => {
   const { name, password } = data;
 
   const existingPlayer = players.find((player) => player.name === data.name);
 
   if (existingPlayer) {
     if (existingPlayer.password !== password) {
-      const response = createRegistrationResponse({
-        name,
-        index: existingPlayer.index,
-        error: true,
-        errorText: 'Incorrect user password',
-      });
-
-      ws.send(response);
+      ws.send(
+        createRegistrationResponse({
+          name,
+          index: existingPlayer.index,
+          error: true,
+          errorText: 'Incorrect user password',
+        })
+      );
 
       return;
     }
 
     if (existingPlayer.isConnected) {
-      const response = createRegistrationResponse({
-        name,
-        index: existingPlayer.index,
-        error: true,
-        errorText: `Player ${name} is already connected`,
-      });
-
-      ws.send(response);
+      ws.send(
+        createRegistrationResponse({
+          name,
+          index: existingPlayer.index,
+          error: true,
+          errorText: `Player ${name} is already connected`,
+        })
+      );
 
       return;
     }
 
     existingPlayer.isConnected = true;
 
-    const response = createRegistrationResponse({
-      name: existingPlayer.name,
-      index: existingPlayer.index,
-      error: false,
-      errorText: '',
-    });
+    ws.playerName = existingPlayer.name;
+    ws.playerIndex = existingPlayer.index;
 
-    ws.send(response);
+    ws.send(
+      createRegistrationResponse({
+        name: existingPlayer.name,
+        index: existingPlayer.index,
+        error: false,
+        errorText: '',
+      })
+    );
     coloredLog(`🙎 Player "${name}" successfully logged in 🎉`, LOG_COLORS.fGreen);
 
     return;
@@ -62,14 +64,17 @@ export const handlePlayerRegistration = (data: PlayerRegData, ws: WebSocket) => 
 
   players.push(newPlayer);
 
-  const response = createRegistrationResponse({
-    name: newPlayer.name,
-    index: newPlayer.index,
-    error: false,
-    errorText: '',
-  });
+  ws.playerName = newPlayer.name;
+  ws.playerIndex = newPlayer.index;
 
-  ws.send(response);
+  ws.send(
+    createRegistrationResponse({
+      name: newPlayer.name,
+      index: newPlayer.index,
+      error: false,
+      errorText: '',
+    })
+  );
 
   coloredLog(`🙎 New player "${name}" registered successfully! 🎉`, LOG_COLORS.fGreen);
   console.log('🎮 Current players:', players);

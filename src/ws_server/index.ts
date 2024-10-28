@@ -2,13 +2,14 @@ import { WebSocketServer } from 'ws';
 import { coloredLog } from '../utils/coloredLog';
 import { LOG_COLORS } from '../constants/constants';
 import { handlePlayerRegistration } from '../controllers/playerController';
-import type { PlayerRegData, GameRequest } from '../models/types';
+import type { PlayerRegData, GameRequest, IAddUserToRoom, CustomWebSocket } from '../models/types';
+import { handleAddUserToRoom, handleCreateRoom, updateRooms } from '../controllers/roomController';
 
 export const startWSServer = (WS_PORT: number) => {
   const wss = new WebSocketServer({ port: WS_PORT });
   coloredLog(`🎉 WebSocket server started on port ${WS_PORT}`, LOG_COLORS.fGreen);
 
-  wss.on('connection', (ws) => {
+  wss.on('connection', (ws: CustomWebSocket) => {
     coloredLog('🔌 New WebSocket connection established', LOG_COLORS.fYellow);
 
     ws.on('message', (msg: string) => {
@@ -22,6 +23,20 @@ export const startWSServer = (WS_PORT: number) => {
           case 'reg': {
             const parsedData: PlayerRegData = JSON.parse(data);
             handlePlayerRegistration(parsedData, ws);
+            updateRooms(wss);
+            break;
+          }
+
+          case 'create_room': {
+            handleCreateRoom(ws);
+            updateRooms(wss);
+            break;
+          }
+
+          case 'add_user_to_room': {
+            const { indexRoom }: IAddUserToRoom = JSON.parse(data);
+            handleAddUserToRoom(ws, indexRoom, wss);
+            updateRooms(wss);
             break;
           }
 

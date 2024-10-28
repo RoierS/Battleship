@@ -1,3 +1,4 @@
+import type WebSocket from 'ws';
 export interface IPlayer {
   index: number;
   name: string;
@@ -21,4 +22,22 @@ export interface IMessage {
   type: string;
   data: string;
   id: number;
+}
+
+export interface IRoom {
+  roomId: number;
+  roomUsers: IRoomPlayer[];
+}
+export interface IRoomPlayer {
+  index: number;
+  name: string;
+}
+
+export interface IAddUserToRoom {
+  indexRoom: number | string;
+}
+
+export interface CustomWebSocket extends WebSocket {
+  playerName: string;
+  playerIndex: number;
 }
