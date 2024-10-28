@@ -19,6 +19,13 @@
 
 * App served @ `http://localhost:8181` without nodemon
 
+
+**Additional Scripts**
+
+`npm run build" - runs build process
+`npm run lint" - runs linter
+`npm run lint:fix" - fixes linter errors
+
 ---
 
 **All commands**
